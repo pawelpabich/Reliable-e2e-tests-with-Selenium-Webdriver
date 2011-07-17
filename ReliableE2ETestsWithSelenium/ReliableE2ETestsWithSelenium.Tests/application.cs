@@ -12,6 +12,7 @@ namespace ReliableE2ETestsWithSelenium.Tests
         [SetUp]
         public void Setup()
         {
+            DB.Reset();
             browser = new FirefoxDriver();
         }
 
@@ -19,6 +20,7 @@ namespace ReliableE2ETestsWithSelenium.Tests
         public void CleanUp()
         {
             browser.Quit();
+            DB.Reset();
         }
 
         [Test]

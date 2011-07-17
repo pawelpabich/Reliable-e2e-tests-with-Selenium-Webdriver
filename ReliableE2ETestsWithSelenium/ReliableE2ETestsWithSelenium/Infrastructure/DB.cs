@@ -11,6 +11,14 @@ namespace ReliableE2ETestsWithSelenium.Infrastructure
     /// </summary>
     public class DB
     {
+        public static void Reset()
+        {
+            foreach(var dbFile in Directory.GetFiles(CalculatePhysicalPathToDB(), "*.txt"))
+            {
+                File.Delete(dbFile);
+            }
+        }
+
         public static IEnumerable<String> GetProducts()
         {
             return Read("Products.txt");
@@ -23,40 +31,35 @@ namespace ReliableE2ETestsWithSelenium.Infrastructure
 
         private static void Write(string fileName, IEnumerable<string> data)
         {
-            var path = CaculatePhysicalPath(fileName);
+            var path = CalculatePhysicalPathToDB() + fileName;
             File.WriteAllText(path, String.Join(",", data));
         }
 
         private static IEnumerable<string> Read(string fileName)
         {
-            var path = CaculatePhysicalPath(fileName);
-            var content = File.ReadAllText(path);
+            var path = CalculatePhysicalPathToDB() + fileName;
+            var content = File.Exists(path) ? File.ReadAllText(path) : null;
             return String.IsNullOrEmpty(content) ? Enumerable.Empty<string>() : content.Split(',');
         }
 
-        private static string CaculatePhysicalPath(string fileName)
+        private static string CalculatePhysicalPathToDB()
         {
-            String path;
-            if (HttpContext.Current != null)
-            {
-                path = CalculatePathWhenUsedFromWebApplication(fileName);
-            }
-            else
-            {
-                path = CalculatePathWhenUsedFromTests(fileName);
-            }
-
-            return path;
+            return IsWebApp() ? CalculatePathToDBWhenUsedFromWebApplication() : CalculatePathToDBWhenUsedFromTests();
         }
 
-        private static string CalculatePathWhenUsedFromTests(string fileName)
+        private static bool IsWebApp()
         {
-            return Environment.CurrentDirectory + @"\..\..\..\ReliableE2ETestsWithSelenium\App_Data\" + fileName;
+            return HttpContext.Current != null;
         }
 
-        private static string CalculatePathWhenUsedFromWebApplication(string fileName)
+        private static string CalculatePathToDBWhenUsedFromTests()
         {
-            return HttpContext.Current.Server.MapPath("~/App_Data/" + fileName);
+            return Environment.CurrentDirectory + @"\..\..\..\ReliableE2ETestsWithSelenium\App_Data\";
+        }
+
+        private static string CalculatePathToDBWhenUsedFromWebApplication()
+        {
+            return HttpContext.Current.Server.MapPath("~/App_Data/");
         }
     }
 }
