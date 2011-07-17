@@ -1,4 +1,5 @@
 ﻿using System.Web.Mvc;
+using ReliableE2ETestsWithSelenium.Infrastructure;
 
 namespace ReliableE2ETestsWithSelenium.Controllers
 {
@@ -12,6 +13,11 @@ namespace ReliableE2ETestsWithSelenium.Controllers
         public ActionResult Test1()
         {
             return View();
+        }
+
+        public ActionResult GetProducts()
+        {
+            return Json(DB.GetProducts(), JsonRequestBehavior.AllowGet);
         }
     }
 }

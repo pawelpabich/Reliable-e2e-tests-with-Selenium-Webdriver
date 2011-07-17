@@ -1,6 +1,5 @@
 ﻿using System.Web.Mvc;
 using System.Web.Routing;
-using ReliableE2ETestsWithSelenium.Infrastructure;
 
 namespace ReliableE2ETestsWithSelenium
 {

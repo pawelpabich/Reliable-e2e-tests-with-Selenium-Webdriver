@@ -6,9 +6,27 @@
 <h2>Test1</h2>
 
 
+<a href="#" id="update-list">Update</a>
 <ol id='product-list'>
     @foreach (var product in DB.GetProducts())
     {
         <li>@product</li>
     }
+
+    
 </ol>
+
+
+
+<script type="text/javascript">
+
+    $("#update-list").click(function (e) {
+
+        $.getJSON("@Url.Action("GetProducts", "Home")", function (data) {
+            $("#product-list").empty();
+        });
+        
+        e.preventDefault();
+    })
+
+</script>
