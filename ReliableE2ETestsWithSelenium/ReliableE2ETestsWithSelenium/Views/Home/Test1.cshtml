@@ -1,5 +1,14 @@
-﻿@{
+﻿@using ReliableE2ETestsWithSelenium.Infrastructure
+@{
     ViewBag.Title = "Test1";
 }
 
 <h2>Test1</h2>
+
+
+<ol id='product-list'>
+    @foreach (var product in DB.GetProducts())
+    {
+        <li>@product</li>
+    }
+</ol>
