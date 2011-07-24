@@ -6,7 +6,7 @@
 <h2>Test1</h2>
 
 
-<a href="#" id="refresh-list">Refresh</a>
+<a href="#" id="refresh-list">Refresh</a><span id="refresh-status">REFRESHED!!!</span>
 <ol id='product-list'>
     @foreach (var product in DB.GetProducts())
     {
@@ -20,9 +20,12 @@
 
     $("#refresh-list").click(function (e) {
         
-        $.getJSON("@Url.Action("GetProducts", "Home")", function (data) {
+        var refreshStatus = $("#refresh-status").hide();
+
+        $.getJSON("@Url.Action("GetProducts", "Home")", function (data) {            
             $("#product-list").empty();
             $("#product-template").tmpl(data).appendTo("#product-list");
+            refreshStatus.show();
         });
         
         e.preventDefault();

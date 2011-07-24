@@ -35,34 +35,70 @@ namespace ReliableE2ETestsWithSelenium.Tests
         }
 
         [Test]
-        public void should_update_product_list()
+        public void should_refresh_product_list()
         {
             Given_I_am_on_product_listing_page();
             When_I_refresh_product_list();
             Then_I_can_see_new_list_of_products();
         }
 
-        private void Then_I_can_see_new_list_of_products()
+        [Test]
+        public void should_notify_when_refresh_finished()
         {
-            var overallTimeout = TimeSpan.FromSeconds(5);
-            var sleepCycle = TimeSpan.FromMilliseconds(50);
-            var wait = new WebDriverWait(new SystemClock(), browser, overallTimeout, sleepCycle);
-            var result = wait.Until(_ =>
-                                        {
-                                            var isRefreshFinished = FindDisplayedProducts().Count == 4;
-                                            Console.WriteLine("Is refresh finished : " + isRefreshFinished);
-                                            return isRefreshFinished;
-                                        });
+            Given_I_am_on_product_listing_page();
+            When_I_refresh_product_list();
+            Then_I_get_notfied_when_refresh_is_finished();
+        }
+
+        private void Then_I_get_notfied_when_refresh_is_finished()
+        {
+            var result = ExecuteWithRetries(_ => {
+                var element = browser.FindElementByCssSelector("#refresh-status");
+                var isDisplayed = element != null && element.Displayed;
+                Console.WriteLine("Is notification displayed : " + isDisplayed);
+                return isDisplayed;
+            });
+
+            Assert.IsTrue(result, "Refresh notification not found");
+        }
+
+        private void Then_I_can_see_new_list_of_products()
+        {            
+           var result = ExecuteWithRetries(_ =>
+                                   {
+                                       var isRefreshFinished = FindDisplayedProducts().Count == 4;
+                                       Console.WriteLine("Is refresh finished : " + isRefreshFinished);
+                                       return isRefreshFinished;
+                                   });
 
             //var products = FindDisplayedProducts();   
             //Assert.AreEqual(4, products.Count);
-            Assert.IsTrue(result);
+            Assert.IsTrue(result, "List of products has not been refreshed");
         }  
 
         private void When_I_refresh_product_list()
         {
             DB.InsertProducts(new []{"Product1", "Product2", "Product3", "Product4"});
             browser.FindElementByCssSelector("#refresh-list").Click();
+        }
+
+        private bool ExecuteWithRetries(Func<IWebDriver, bool> condition)
+        {
+            var overallTimeout = TimeSpan.FromSeconds(5);
+            var sleepCycle = TimeSpan.FromMilliseconds(50);
+            var wait = new WebDriverWait(new SystemClock(), browser, overallTimeout, sleepCycle);
+            bool result;
+
+            try
+            {
+                result = wait.Until(condition);
+            }
+            catch(TimeoutException)
+            {
+                result = false;
+            }
+            
+            return result;
         }
 
         private void Then_I_can_see_list_of_products()
