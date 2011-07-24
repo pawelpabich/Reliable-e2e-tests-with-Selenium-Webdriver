@@ -13,7 +13,6 @@ namespace ReliableE2ETestsWithSelenium.Controllers
 
         public ActionResult GetProducts()
         {
-            Thread.Sleep(2000);
             return Json(DB.GetProducts(), JsonRequestBehavior.AllowGet);
         }
     }
