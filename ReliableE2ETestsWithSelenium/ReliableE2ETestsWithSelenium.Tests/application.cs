@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.ObjectModel;
+using System.Drawing.Imaging;
 using NUnit.Framework;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Firefox;
@@ -97,8 +98,17 @@ namespace ReliableE2ETestsWithSelenium.Tests
             {
                 result = false;
             }
+
+            if (!result) TakeScreenshot();
             
             return result;
+        }
+
+        private void TakeScreenshot()
+        {
+            var camera = (ITakesScreenshot) browser;
+            var screenshot = camera.GetScreenshot();
+            screenshot.SaveAsFile(Guid.NewGuid().ToString("N") + ".png", ImageFormat.Png);
         }
 
         private void Then_I_can_see_list_of_products()
