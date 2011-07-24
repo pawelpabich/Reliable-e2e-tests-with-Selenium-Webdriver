@@ -1,4 +1,6 @@
-﻿using NUnit.Framework;
+﻿using System.Collections.ObjectModel;
+using NUnit.Framework;
+using OpenQA.Selenium;
 using OpenQA.Selenium.Firefox;
 using ReliableE2ETestsWithSelenium.Infrastructure;
 
@@ -30,9 +32,29 @@ namespace ReliableE2ETestsWithSelenium.Tests
             Then_I_can_see_list_of_products();
         }
 
+        [Test]
+        public void should_update_product_list()
+        {
+            Given_I_am_on_product_listing_page();
+            When_I_refresh_product_list();
+            Then_I_can_see_new_list_of_products();
+        }
+
+        private void Then_I_can_see_new_list_of_products()
+        {
+            var products = FindDisplayedProducts();   
+            Assert.AreEqual(4, products.Count);
+        }  
+
+        private void When_I_refresh_product_list()
+        {
+            DB.InsertProducts(new []{"Product1", "Product2", "Product3", "Product4"});
+            browser.FindElementByCssSelector("#refresh-list").Click();
+        }
+
         private void Then_I_can_see_list_of_products()
         {
-            var products = browser.FindElementsByCssSelector("#product-list li");
+            var products = FindDisplayedProducts();   
             Assert.AreEqual(3, products.Count);
         }
 
@@ -40,6 +62,11 @@ namespace ReliableE2ETestsWithSelenium.Tests
         {
             DB.InsertProducts(new[] {"Product1", "Product2", "Product3"});
             browser.Navigate().GoToUrl("http://localhost:2066/Home/Test1");
+        }
+
+        private ReadOnlyCollection<IWebElement> FindDisplayedProducts()
+        {
+            return browser.FindElementsByCssSelector("#product-list li");
         }
     }
 }
