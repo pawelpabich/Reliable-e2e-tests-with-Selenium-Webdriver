@@ -52,18 +52,31 @@ namespace ReliableE2ETestsWithSelenium.Tests
 
         private void Then_I_can_see_new_list_of_products()
         {
-            
+            var result = ExecuteWithRetries(_ =>
+            {
+                var isRefreshFinished = FindDisplayedProducts().Count == 4;
+                Console.WriteLine("Is refresh finished : " + isRefreshFinished);
+                return isRefreshFinished;
+            });
+
+
             try
             {
-                Thread.Sleep(2000);
-                var products = FindDisplayedProducts();
-                Assert.AreEqual(4, products.Count);
+                Assert.IsTrue(result, "List of products has not been refreshed");           
             }
             catch (AssertionException)
             {
                 TakeScreenshot();
                 throw;
             }            
+        }
+
+        private bool ExecuteWithRetries(Func<IWebDriver, bool> condition)
+        {
+            var overallTimeout = TimeSpan.FromSeconds(5);
+            var sleepCycle = TimeSpan.FromMilliseconds(50);
+            var wait = new WebDriverWait(new SystemClock(), browser, overallTimeout, sleepCycle);
+            return wait.Until(condition);
         }
 
         private void Then_I_can_see_list_of_products()
