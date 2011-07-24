@@ -11,11 +11,6 @@ namespace ReliableE2ETestsWithSelenium.Controllers
             return View();
         }
 
-        public ActionResult Test1()
-        {
-            return View();
-        }
-
         public ActionResult GetProducts()
         {
             Thread.Sleep(2000);

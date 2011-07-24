@@ -1,10 +1,37 @@
-﻿@{
-    ViewBag.Title = "Home Page";
+﻿@using ReliableE2ETestsWithSelenium.Infrastructure
+@{
+    ViewBag.Title = "";
 }
 
-<ol>
-    <li>
-        @Html.ActionLink("Test1", "Test1", "Home")
-    </li>
+<h2>Test1</h2>
 
+
+<a href="#" id="refresh-list">Refresh</a><span id="refresh-status">REFRESHED!!!</span>
+<ol id='product-list'>
+    @foreach (var product in DB.GetProducts())
+    {
+        <li>@product</li>
+    }
 </ol>
+
+
+<script type="text/javascript">
+
+    $("#refresh-list").click(function (e) {
+        
+        var refreshStatus = $("#refresh-status").hide();
+
+        $.getJSON("@Url.Action("GetProducts", "Home")", function (data) {            
+            $("#product-list").empty();
+            $("#product-template").tmpl(data).appendTo("#product-list");
+            refreshStatus.show();
+        });
+        
+        e.preventDefault();
+    })
+
+</script>
+
+<script id="product-template" type="text/x-jquery-tmpl">
+    <li>${}</li>
+</script>
