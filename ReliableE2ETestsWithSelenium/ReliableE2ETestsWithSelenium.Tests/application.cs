@@ -35,6 +35,26 @@ namespace ReliableE2ETestsWithSelenium.Tests
             Then_I_can_see_list_of_products();
         }
 
+        [Test]
+        public void should_refresh_product_list()
+        {
+            Given_I_am_on_product_listing_page();
+            When_I_refresh_product_list();
+            Then_I_can_see_new_list_of_products();
+        }
+
+        private void When_I_refresh_product_list()
+        {
+            DB.InsertProducts(new[] { "Product1", "Product2", "Product3", "Product4" });
+            browser.FindElementByCssSelector("#refresh-list").Click();
+        }
+
+        private void Then_I_can_see_new_list_of_products()
+        {
+            var products = FindDisplayedProducts();
+            Assert.AreEqual(4, products.Count);
+        }
+
         private void Then_I_can_see_list_of_products()
         {
             var products = FindDisplayedProducts();   
