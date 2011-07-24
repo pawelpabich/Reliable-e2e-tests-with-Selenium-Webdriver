@@ -44,6 +44,27 @@ namespace ReliableE2ETestsWithSelenium.Tests
             Then_I_can_see_new_list_of_products();
         }
 
+        [Test]
+        public void should_notify_when_refresh_finished()
+        {
+            Given_I_am_on_product_listing_page();
+            When_I_refresh_product_list();
+            Then_I_get_notfied_when_refresh_is_finished();
+        }
+
+        private void Then_I_get_notfied_when_refresh_is_finished()
+        {
+            var result = ExecuteWithRetries(_ =>
+            {
+                var element = browser.FindElementByCssSelector("#refresh-status");
+                var isDisplayed = element != null && element.Displayed;
+                Console.WriteLine("Is notification displayed : " + isDisplayed);
+                return isDisplayed;
+            });
+
+            Assert.IsTrue(result, "Refresh notification not found");
+        }
+
         private void When_I_refresh_product_list()
         {
             DB.InsertProducts(new[] { "Product1", "Product2", "Product3", "Product4" });
