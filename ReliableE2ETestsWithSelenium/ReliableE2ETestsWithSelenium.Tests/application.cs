@@ -120,7 +120,7 @@ namespace ReliableE2ETestsWithSelenium.Tests
         private void Given_I_am_on_product_listing_page()
         {
             DB.InsertProducts(new[] {"Product1", "Product2", "Product3"});
-            browser.Navigate().GoToUrl("http://localhost:2066/Home/Test1");
+            browser.Navigate().GoToUrl("http://localhost:2066");
         }
 
         private ReadOnlyCollection<IWebElement> FindDisplayedProducts()
