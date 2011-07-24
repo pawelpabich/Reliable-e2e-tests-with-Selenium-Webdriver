@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.ObjectModel;
 using System.Drawing.Imaging;
+using System.Threading;
 using NUnit.Framework;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Firefox;
@@ -51,10 +52,11 @@ namespace ReliableE2ETestsWithSelenium.Tests
 
         private void Then_I_can_see_new_list_of_products()
         {
-            var products = FindDisplayedProducts();
-
+            
             try
             {
+                Thread.Sleep(2000);
+                var products = FindDisplayedProducts();
                 Assert.AreEqual(4, products.Count);
             }
             catch (AssertionException)
