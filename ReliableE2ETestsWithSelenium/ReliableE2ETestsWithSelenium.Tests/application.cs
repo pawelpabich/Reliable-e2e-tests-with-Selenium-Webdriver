@@ -52,13 +52,29 @@ namespace ReliableE2ETestsWithSelenium.Tests
         private void Then_I_can_see_new_list_of_products()
         {
             var products = FindDisplayedProducts();
-            Assert.AreEqual(4, products.Count);
+
+            try
+            {
+                Assert.AreEqual(4, products.Count);
+            }
+            catch (AssertionException)
+            {
+                TakeScreenshot();
+                throw;
+            }            
         }
 
         private void Then_I_can_see_list_of_products()
         {
             var products = FindDisplayedProducts();   
             Assert.AreEqual(3, products.Count);
+        }
+
+        private void TakeScreenshot()
+        {
+            var camera = (ITakesScreenshot)browser;
+            var screenshot = camera.GetScreenshot();
+            screenshot.SaveAsFile(Guid.NewGuid().ToString("N") + ".png", ImageFormat.Png);
         }
 
         private void Given_I_am_on_product_listing_page()
