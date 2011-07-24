@@ -12,8 +12,6 @@
     {
         <li>@product</li>
     }
-
-    
 </ol>
 
 
@@ -21,7 +19,7 @@
 <script type="text/javascript">
 
     $("#refresh-list").click(function (e) {
-
+        
         $.getJSON("@Url.Action("GetProducts", "Home")", function (data) {
             $("#product-list").empty();
             $("#product-template").tmpl(data).appendTo("#product-list");

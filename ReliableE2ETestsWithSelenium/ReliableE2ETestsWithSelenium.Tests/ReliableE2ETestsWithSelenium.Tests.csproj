@@ -50,6 +50,9 @@
     <Reference Include="WebDriver">
       <HintPath>..\libs\Selenium\WebDriver.dll</HintPath>
     </Reference>
+    <Reference Include="Webdriver.Support">
+      <HintPath>..\libs\Selenium\Webdriver.Support.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="application.cs" />

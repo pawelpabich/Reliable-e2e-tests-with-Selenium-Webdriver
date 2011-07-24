@@ -1,7 +1,9 @@
-﻿using System.Collections.ObjectModel;
+﻿using System;
+using System.Collections.ObjectModel;
 using NUnit.Framework;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Firefox;
+using OpenQA.Selenium.Support.UI;
 using ReliableE2ETestsWithSelenium.Infrastructure;
 
 namespace ReliableE2ETestsWithSelenium.Tests
@@ -42,8 +44,19 @@ namespace ReliableE2ETestsWithSelenium.Tests
 
         private void Then_I_can_see_new_list_of_products()
         {
-            var products = FindDisplayedProducts();   
-            Assert.AreEqual(4, products.Count);
+            var overallTimeout = TimeSpan.FromSeconds(5);
+            var sleepCycle = TimeSpan.FromMilliseconds(50);
+            var wait = new WebDriverWait(new SystemClock(), browser, overallTimeout, sleepCycle);
+            var result = wait.Until(_ =>
+                                        {
+                                            var isRefreshFinished = FindDisplayedProducts().Count == 4;
+                                            Console.WriteLine("Is refresh finished : " + isRefreshFinished);
+                                            return isRefreshFinished;
+                                        });
+
+            //var products = FindDisplayedProducts();   
+            //Assert.AreEqual(4, products.Count);
+            Assert.IsTrue(result);
         }  
 
         private void When_I_refresh_product_list()
