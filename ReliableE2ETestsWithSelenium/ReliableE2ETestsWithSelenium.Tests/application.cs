@@ -60,15 +60,7 @@ namespace ReliableE2ETestsWithSelenium.Tests
             });
 
 
-            try
-            {
-                Assert.IsTrue(result, "List of products has not been refreshed");           
-            }
-            catch (AssertionException)
-            {
-                TakeScreenshot();
-                throw;
-            }            
+           Assert.IsTrue(result, "List of products has not been refreshed");                     
         }
 
         private bool ExecuteWithRetries(Func<IWebDriver, bool> condition)
@@ -76,7 +68,20 @@ namespace ReliableE2ETestsWithSelenium.Tests
             var overallTimeout = TimeSpan.FromSeconds(5);
             var sleepCycle = TimeSpan.FromMilliseconds(50);
             var wait = new WebDriverWait(new SystemClock(), browser, overallTimeout, sleepCycle);
-            return wait.Until(condition);
+            bool result;
+
+            try
+            {
+                result = wait.Until(condition);
+            }
+            catch (TimeoutException)
+            {
+                result = false;
+            }
+
+            if (!result) TakeScreenshot();
+
+            return result;
         }
 
         private void Then_I_can_see_list_of_products()
